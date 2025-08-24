@@ -1,18 +1,21 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_community.llms import Ollama
+from langchain_ollama import OllamaLLM
 import streamlit as st
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv('chatbotapi.env')
 
 os.environ["LANGCHAIN_TRACING_V2"]="true"
-os.environ["LangChainApiKey"]=os.getenv("LangChainApiKey")
+
+# Get API key from environment
 api_key = os.getenv("LangChainApiKey")
 if api_key is None:
-    raise ValueError("LangChainApiKey not found! Please check your .env file.")
+    raise ValueError(f"LangChainApiKey not found! Please check your chatbotapi.env file in {os.path.abspath('chatbotapi.env')}")
+
+# Set API key in environment
 os.environ["LangChainApiKey"] = api_key
 
 ## Prompt Template
@@ -29,7 +32,7 @@ st.title('Langchain Demo With LLAMA2 API')
 input_text=st.text_input("Search the topic u want")
 
 # ollama LLAma2 LLm 
-llm=Ollama(model="llama2")
+llm=OllamaLLM(model="llama2")
 output_parser=StrOutputParser()
 chain=prompt|llm|output_parser
 
